@@ -12,13 +12,106 @@ enum Role {
   USER
 }
 
+enum Visibility {
+  PRIVATE
+  PUBLIC
+}
+
 model User {
-  id            String   @id @default(uuid())
-  username      String   @unique
-  email         String   @unique
+  id            String              @id @default(uuid())
+  username      String              @unique
+  email         String              @unique
   password_hash String
-  created_at    DateTime @default(now())
-  role          Role     @default(USER)
+  created_at    DateTime            @default(now())
+  role          Role                @default(USER)
+  profile_pic   Bytes?
+  facilities    FacilitiesOnUsers[] 
+  events        EventsOnUsers[]
 
   @@map("users")
+}
+
+model Facility {
+  id              String     @id @default(uuid())
+  location        String
+  city            String
+  name            String     @unique
+  description     String
+  owner           String
+  public          Visibility @default(PRIVATE) 
+  created_at      DateTime   @default(now())
+  photo           Bytes
+  map             Bytes
+  users           FacilitiesOnUsers[]
+  Events          Event[]
+
+  @@map("facilities")
+}
+
+model FacilitiesOnUsers {
+  user        User     @relation(fields: [id_user], references: [id])
+  id_user     String
+  facility    Facility @relation(fields: [id_facility], references: [id])
+  id_facility String
+  role        Role     @default(USER)
+
+  @@id([id_user, id_facility])
+}
+
+model Event {
+  id              String           @id @default(uuid())
+  owner           String
+  name            String 
+  address         String 
+  city            String
+  info            String 
+  begin_date      DateTime
+  end_date        DateTime
+  public          Visibility       @default(PRIVATE)
+  price           Decimal          @db.Decimal(10, 2)
+  created_at      DateTime         @default(now())
+  photo           Bytes
+  id_facility     String     
+  facility        Facility         @relation(fields: [id_facility], references: [id])
+  users           EventsOnUsers[]
+  event_schedules Event_Schedule[]
+  event_stands     Event_Stand[]
+
+  @@map("events")
+}
+
+model EventsOnUsers {
+  user        User     @relation(fields: [id_user], references: [id])
+  id_user     String
+  event       Event    @relation(fields: [id_event], references: [id])
+  id_event    String 
+  role        Role     @default(USER)
+
+  @@id([id_user, id_event])
+}
+
+model Event_Schedule {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  presenter   String
+  time        DateTime 
+  duration    Int
+  event       Event    @relation(fields: [id_event], references: [id]) 
+  id_event    String
+
+  @@map("event_schedules")
+}
+
+model Event_Stand {
+  id          String @id @default(uuid())
+  name        String 
+  owner       String
+  location    String 
+  description String
+  duration    DateTime
+  event       Event  @relation(fields: [id_event], references: [id])
+  id_event    String
+
+  @@map("event_stands")
 }

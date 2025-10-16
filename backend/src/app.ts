@@ -10,11 +10,16 @@ import authRoutes from "./auth/authRoutes";
 import userRoutes from "./users/userRoutes";
 import { AppError } from "./common/AppError";
 import { ZodError } from "zod";
+import facilityRoutes from "./facilities/facilityRoutes";
+import eventRoutes from "./events/eventRoutes";
 
-export const app = fastify();
+export const app = fastify({
+    bodyLimit: 10 * 1024 *1024,
+});
 
 app.register(fastifyCors, {
-    origin: env.FRONTEND_URL,
+    //origin: env.FRONTEND_URL,
+    origin: "*",
     credentials: true
 });
 
@@ -45,6 +50,8 @@ app.addHook('onResponse', loggingHook);
 
 app.register(authRoutes);
 app.register(userRoutes);
+app.register(facilityRoutes);
+app.register(eventRoutes);
 
 app.setErrorHandler((err: FastifyError | ZodError, _req: FastifyRequest, reply: FastifyReply) => {
     if (err instanceof AppError) {
