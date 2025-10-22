@@ -70,9 +70,12 @@ export class AuthService implements IAuthService {
 
     return reply.jwtSign(
       {
+        id: user.id,
         username: user.username,
         email: user.email,
+        created_at: user.created_at,
         role: user.role,
+        profile_pic: user.profile_pic
       },
       {
         sign: {
