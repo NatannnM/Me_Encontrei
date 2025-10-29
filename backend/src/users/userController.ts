@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { IUserController, UpdateUserRequest, UserRole } from "./userInterfaces";
+import { IUserController, UpdateUserData, UpdateUserRequest, UserRole } from "./userInterfaces";
 import { idSchema } from "./userSchema";
 import { UserService } from "./userService";
 
@@ -19,7 +19,7 @@ export class UserController implements IUserController {
 
     async update(req: FastifyRequest<UpdateUserRequest>, reply: FastifyReply) {
         const { id } = req.params;
-        const data = req.body;
+        const data = req.body as UpdateUserData;
         const isAdmin = (req.user as UserRole).role === 'ADMIN';
         const user = await this.userService.updateUserById(id, data, isAdmin);
         return reply.status(200).send({ user });

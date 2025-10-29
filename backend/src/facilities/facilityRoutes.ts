@@ -2,11 +2,13 @@ import { FastifyInstance } from "fastify";
 import { PrismaFacilityRepository } from "./facilityRepository";
 import { FacilityService } from "./facilityService";
 import { FacilityController } from "./facilityController";
+import { FacilitiesOnUsersService } from "src/facilitiesOnUsers/facilitiesOnUsersService";
 
 async function facilityRoutes(app: FastifyInstance) {
     const prismaFacilityRepository = new PrismaFacilityRepository()
     const facilityService = new FacilityService(prismaFacilityRepository);
-    const facilityController = new FacilityController(facilityService);
+    const facilitiesOnUsersService = new FacilitiesOnUsersService();
+    const facilityController = new FacilityController(facilityService, facilitiesOnUsersService);
 
     app.post('/facilities', facilityController.create.bind(facilityController));
     app.get('/facilities',  facilityController.showAll.bind(facilityController));

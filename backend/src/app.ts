@@ -12,6 +12,8 @@ import { AppError } from "./common/AppError";
 import { ZodError } from "zod";
 import facilityRoutes from "./facilities/facilityRoutes";
 import eventRoutes from "./events/eventRoutes";
+import facilitiesOnUsersRoutes from "./facilitiesOnUsers/facilitiesOnUsersRoutes";
+import eventsOnUsersRoutes from "./eventsOnUsers/eventsOnUsersRoutes";
 
 export const app = fastify({
     bodyLimit: 10 * 1024 *1024,
@@ -19,8 +21,10 @@ export const app = fastify({
 
 app.register(fastifyCors, {
     //origin: env.FRONTEND_URL,
-    origin: "*",
-    credentials: true
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization'],
 });
 
 app.register(fastifyJwt, {
@@ -52,6 +56,8 @@ app.register(authRoutes);
 app.register(userRoutes);
 app.register(facilityRoutes);
 app.register(eventRoutes);
+app.register(facilitiesOnUsersRoutes);
+app.register(eventsOnUsersRoutes);
 
 app.setErrorHandler((err: FastifyError | ZodError, _req: FastifyRequest, reply: FastifyReply) => {
     if (err instanceof AppError) {

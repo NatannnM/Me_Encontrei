@@ -2,14 +2,34 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import { IEventController } from "./eventInterfaces";
 import { EventService } from "./eventService";
 import { createEventSchema, idSchema } from "./eventSchema";
+import { EventsOnUsersService } from "src/eventsOnUsers/eventsOnUsersService";
+
+interface CreateEventRequest {
+    userId: string
+}
 
 export class EventController implements IEventController {
-    constructor(private readonly eventService: EventService) { }
+    constructor(
+        private readonly eventService: EventService,
+        private eventsOnUsersServices: EventsOnUsersService
+    ) { }
 
     async create(req: FastifyRequest, reply: FastifyReply) {
+        const body = req.body as CreateEventRequest;
+        const userId = body.userId;
         const data = createEventSchema.parse(req.body);
-        const event = await this.eventService.createEvent(data);
-        return reply.status(201).send({ event });
+        try{
+            const event = await this.eventService.createEvent(data);
+            await this.eventsOnUsersServices.createEventsOnUsers({
+                id_user: userId,
+                id_event: event.id,
+                creator: true,
+            });
+
+            return reply.status(201).send({ event });
+        } catch(error){
+            return reply.status(500).send({ message: 'Erro ao criar o evento e vínculo.' });
+        }
     }
 
     async showAll(_req: FastifyRequest, reply: FastifyReply) {

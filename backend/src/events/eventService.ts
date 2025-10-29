@@ -85,7 +85,7 @@ export class EventService implements IEventService {
 
     async getEventById(id: string) {
         const event = await this.eventRepository.findEventById(id);
-
+        
         if (!event) {
             throw new AppError('Event not found', 404, {
                 isOperational: true,
@@ -95,9 +95,9 @@ export class EventService implements IEventService {
         }
 
         const buffer = Buffer.from(event.photo);
-                
+        
         const fileType = await fileTypeFromBuffer(buffer);
-                
+
         if(!fileType){
             throw new AppError('Tipo de imagem não reconhecido', 400);
         }

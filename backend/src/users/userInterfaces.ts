@@ -1,5 +1,6 @@
 import { Prisma, Role, User } from "@prisma/client";
 import { FastifyReply, FastifyRequest, RouteGenericInterface } from "fastify";
+import { createUserInput } from "./userSchema";
 
 // CONTROLLER
 export interface IUserController {
@@ -16,12 +17,14 @@ export interface UpdateUserRequest extends RouteGenericInterface {
         email?: string;
         password?: string;
         created_at?: Date;
+        profile_pic?: string;
         role?: Role;
     };
 }
 
 export type UpdateUserData = Partial<Omit<User, 'id' | 'password_hash'>> & {
     password?: string;
+    profile_pic?: string | Buffer | Uint8Array;
 };
 
 export type UpdateUserDataWithHash = Omit<UpdateUserData, 'password'> & { password_hash?: string };
@@ -32,9 +35,17 @@ export interface UserRole {
 
 // SERVICE
 export interface IUserService {
+    createUser(data: createUserInput): Promise<User>;
     findUserByUsername(username: string): Promise<User | null>;
     getUsers(): Promise<Omit<User, "password_hash">[]>;
-    getUserById(id: string): Promise<Omit<User, "password_hash"> | null>;
+    getUserById(id: string): Promise <Omit<{
+        username: string;
+        email: string;
+        profile_pic: string | null; 
+        role: Role;
+        id: string;
+        created_at: Date;
+    },'password_hash'> | null>;
     updateUserById(id: string, data: Partial<User>, isAdmin: boolean): Promise<Omit<User, "password_hash">>;
     deleteUserById(id: string): Promise<void>;
 }

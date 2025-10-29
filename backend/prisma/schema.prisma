@@ -53,7 +53,7 @@ model FacilitiesOnUsers {
   id_user     String
   facility    Facility @relation(fields: [id_facility], references: [id])
   id_facility String
-  role        Role     @default(USER)
+  creator     Boolean
 
   @@id([id_user, id_facility])
 }
@@ -85,7 +85,7 @@ model EventsOnUsers {
   id_user     String
   event       Event    @relation(fields: [id_event], references: [id])
   id_event    String 
-  role        Role     @default(USER)
+  creator     Boolean 
 
   @@id([id_user, id_event])
 }

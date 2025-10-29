@@ -75,7 +75,6 @@ export class AuthService implements IAuthService {
         email: user.email,
         created_at: user.created_at,
         role: user.role,
-        profile_pic: user.profile_pic
       },
       {
         sign: {
