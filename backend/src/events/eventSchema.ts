@@ -62,7 +62,7 @@ export const createEventSchema = z.object({
             required_error: 'O id do estabelecimento é obrigatório',
             invalid_type_error: 'O id do estabelecimento deve ser uma string'
         })
-        .uuid({ message: "O id do usuário deve ser um UUID válido"}),
+        .uuid({ message: "O id do estabelecimento deve ser um UUID válido"}),
     photo: z
         .string({
             required_error: 'A imagem é obrigatória!'

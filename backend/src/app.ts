@@ -14,6 +14,7 @@ import facilityRoutes from "./facilities/facilityRoutes";
 import eventRoutes from "./events/eventRoutes";
 import facilitiesOnUsersRoutes from "./facilitiesOnUsers/facilitiesOnUsersRoutes";
 import eventsOnUsersRoutes from "./eventsOnUsers/eventsOnUsersRoutes";
+import alertRoutes from "./alert/alertRoutes";
 
 export const app = fastify({
     bodyLimit: 10 * 1024 *1024,
@@ -58,6 +59,7 @@ app.register(facilityRoutes);
 app.register(eventRoutes);
 app.register(facilitiesOnUsersRoutes);
 app.register(eventsOnUsersRoutes);
+app.register(alertRoutes);
 
 app.setErrorHandler((err: FastifyError | ZodError, _req: FastifyRequest, reply: FastifyReply) => {
     if (err instanceof AppError) {

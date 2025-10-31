@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { IFacilityController, UpdateFacilityRequest } from "./facilityInterfaces";
+import { IFacilityController, UpdateFacilityData, UpdateFacilityRequest } from "./facilityInterfaces";
 import { FacilityService } from "./facilityService";
 import { createFacilitySchema, idSchema } from "./facilitySchema";
 import { FacilitiesOnUsersService } from "src/facilitiesOnUsers/facilitiesOnUsersService";
@@ -46,18 +46,15 @@ export class FacilityController implements IFacilityController {
 
     async update(req: FastifyRequest<UpdateFacilityRequest>, reply: FastifyReply) {
         const { id } = req.params;
-        const data = req.body;
-
-        if(data.photo && typeof data.photo === 'string') {
-            data.photo = Buffer.from(data.photo, 'base64');
-        }
-
+        const data = req.body as UpdateFacilityData;
+        console.log(data.public);
         const facility = await this.facilityService.updateFacilityById(id, data);
         return reply.status(200).send({ facility });
     }
 
     async delete(req: FastifyRequest, reply: FastifyReply) {
         const { id } = idSchema.parse(req.params);
+        await this.facilitiesOnUsersServices.deleteFacilitiesOnUsersByFacilityId(id);
         await this.facilityService.deletFacilityById(id);
         return reply.status(204).send();
     }

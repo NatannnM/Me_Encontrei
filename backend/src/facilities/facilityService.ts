@@ -140,7 +140,7 @@ export class FacilityService implements IFacilityService {
     }
 
     async updateFacilityById(id: string, data: UpdateFacilityData) {
-        const { location, name, description, owner, photo, public: newPublic } = data;
+        const { location, city, name, description, owner, photo, map, public: newPublic } = data;
 
         const facility = await this.facilityRepository.findFacilityById(id);
 
@@ -187,23 +187,57 @@ export class FacilityService implements IFacilityService {
         //Preparando valores
         const UpdateData: Partial <{
             location: string;
+            city: string;
             name: string;
             description: string;
             owner: string;
-            photo_url: Uint8Array;
+            photo: Uint8Array;
+            map: Uint8Array;
             public: Visibility;
         }> = {};
 
         if (location) UpdateData.location = location;
+        if (city) UpdateData.city = city;
         if (name) UpdateData.name = name;
         if (description) UpdateData.description = description;
         if (owner) UpdateData.owner = owner;
         if (photo) {
-            if (photo instanceof Uint8Array) {
-                UpdateData.photo_url = Buffer.from(photo.buffer);
+            let base64photo: string;
+
+            if(typeof photo === 'string'){
+                const igualar = photo.match(/^data:(.+);base64,(.+)$/);
+                if(!igualar){
+                    throw new AppError('Formato de imagem inválida');
+                }
+                base64photo = igualar[2];
+            }else if (photo instanceof Uint8Array || Buffer.isBuffer(photo)){
+                base64photo = photo.toString('base64');
             } else {
-                UpdateData.photo_url = Buffer.from(photo, 'base64');
+                throw new AppError('Formato de imagem inválido');
             }
+
+            const photoBuffer = Buffer.from(base64photo, 'base64');
+
+            UpdateData.photo = photoBuffer;
+        }
+        if (map) {
+            let base64map: string;
+
+            if(typeof map === 'string'){
+                const igualar = map.match(/^data:(.+);base64,(.+)$/);
+                if(!igualar){
+                    throw new AppError('Formato de imagem inválida');
+                }
+                base64map = igualar[2];
+            }else if (map instanceof Uint8Array || Buffer.isBuffer(map)){
+                base64map = map.toString('base64');
+            } else {
+                throw new AppError('Formato de imagem inválido');
+            }
+
+            const mapBuffer = Buffer.from(base64map, 'base64');
+
+            UpdateData.map = mapBuffer;
         }
         //Verifica valor do public
         if (newPublic) {

@@ -27,8 +27,25 @@ model User {
   profile_pic   Bytes?
   facilities    FacilitiesOnUsers[] 
   events        EventsOnUsers[]
+  Alert         Alert[]
 
   @@map("users")
+}
+
+model Alert{
+  id          String   @id @default(uuid())
+  title       String  
+  description String
+  begin_date  DateTime
+  end_date    DateTime 
+  id_user     String
+  user        User     @relation(fields: [id_user], references: [id])
+  id_facility String?
+  facility    Facility? @relation(fields: [id_facility], references: [id])
+  id_event    String?
+  event       Event?    @relation(fields: [id_event], references: [id])
+
+  @@map("alerts")
 }
 
 model Facility {
@@ -44,6 +61,7 @@ model Facility {
   map             Bytes
   users           FacilitiesOnUsers[]
   Events          Event[]
+  Alert           Alert[]
 
   @@map("facilities")
 }
@@ -75,7 +93,8 @@ model Event {
   facility        Facility         @relation(fields: [id_facility], references: [id])
   users           EventsOnUsers[]
   event_schedules Event_Schedule[]
-  event_stands     Event_Stand[]
+  event_stands    Event_Stand[]
+  Alert           Alert[]
 
   @@map("events")
 }

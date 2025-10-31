@@ -1,6 +1,26 @@
 import { prisma } from "src/common/prismaClient";
 import { IFacilitiesOnUsersRepository } from "./facilitiesOnUsersInterfaces";
-import { FacilitiesOnUsers, Prisma } from "@prisma/client";
+import { FacilitiesOnUsers, Prisma, Visibility } from "@prisma/client";
+
+interface FacilityData {
+    id: string;
+    location:string
+    city:string
+    name: string;
+    description:string;
+    owner:string;
+    public: Visibility;
+    created_at : Date;
+    photo: Uint8Array | null; 
+    map: Uint8Array | null;
+}
+
+interface FacilitiesOnUsersData {
+  id_user: string;
+  id_facility: string;
+  creator: boolean;
+  facility: FacilityData; 
+}
 
 export class PrismaFacilitiesOnUsersRepository implements IFacilitiesOnUsersRepository{
     async create(data: Prisma.FacilitiesOnUsersCreateInput){
@@ -11,7 +31,7 @@ export class PrismaFacilitiesOnUsersRepository implements IFacilitiesOnUsersRepo
         return fac_users;
     }
 
-    async findFacilitiesOnUsersByUserId(id_user: string): Promise<FacilitiesOnUsers[] | null> {
+    async findFacilitiesOnUsersByUserId(id_user: string): Promise<FacilitiesOnUsersData[] | null> {
         return prisma.facilitiesOnUsers.findMany({
             where: { id_user },
             include: { facility:true }

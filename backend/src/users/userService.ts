@@ -196,7 +196,7 @@ export class UserService implements IUserService {
                 if (!igualar) {
                     throw new AppError('Formato de imagem inválido');
                 }
-                base64data = igualar[2];  // Extraímos a parte base64 da string
+                base64data = igualar[2];  // parte base64 da string
             }else if (profile_pic instanceof Uint8Array || Buffer.isBuffer(profile_pic)) {
                  base64data = profile_pic.toString('base64');
             } else {

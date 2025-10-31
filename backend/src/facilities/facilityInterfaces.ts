@@ -20,12 +20,15 @@ export interface UpdateFacilityRequest extends RouteGenericInterface {
         description?: string;
         owner?: string;
         public?: Visibility;
-        photo?: Buffer;
-        map?: Buffer;
+        photo?: string;
+        map?: string;
     }
 }
 
-export type UpdateFacilityData = Partial<Facility>
+export type UpdateFacilityData = Partial<Facility> & {
+    photo?: string | Buffer | Uint8Array;
+    map?: string | Buffer | Uint8Array;
+}
 
 export interface FacilityVisibility{
     visibility: 'PRIVATE' | 'PUBLIC';
