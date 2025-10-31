@@ -1,4 +1,4 @@
-import { FacilitiesOnUsers, Visibility } from "@prisma/client";
+import { FacilitiesOnUsers, Role, Visibility } from "@prisma/client";
 import { IFacilitiesOnUsersService } from "./facilitiesOnUsersInterfaces";
 import { PrismaFacilitiesOnUsersRepository } from "./facilitiesOnUsersRepository";
 import { createFacilitiesOnUsersInput } from "./facilitiesOnUsersSchema";
@@ -8,8 +8,8 @@ import { fileTypeFromBuffer } from "file-type";
 
 interface FacilityData {
     id: string;
-    location:string
-    city:string
+    location:string;
+    city:string;
     name: string;
     description:string;
     owner:string;
@@ -19,11 +19,27 @@ interface FacilityData {
     map: Uint8Array | null;
 }
 
+interface UserData {
+    id: string;
+    username: string;
+    email: string;
+    created_at: Date;
+    profile_pic: string | null;
+    role: Role;
+}
+
 interface FacilitiesOnUsersData {
   id_user: string;
   id_facility: string;
   creator: boolean;
   facility: FacilityData; 
+}
+
+interface FacilitiesOnUsersDataUser {
+  id_user: string;
+  id_facility: string;
+  creator: boolean;
+  user: UserData; 
 }
 
 
@@ -103,8 +119,45 @@ export class FacilitiesOnUsersService implements IFacilitiesOnUsersService{
         return facilitiesOnUsersComBase64;
     }
 
-    async getFacilitiesOnUsersByFacilityId(id_facility: string): Promise<FacilitiesOnUsers[] | null> {
-        return this.facilitiesOnUsersRepository.findFacilitiesOnUsersByFacilityId(id_facility);
+    async getFacilitiesOnUsersByFacilityId(id_facility: string): Promise<FacilitiesOnUsersDataUser[] | null> {
+        const facilitiesOnUsers = await this.facilitiesOnUsersRepository.findFacilitiesOnUsersByFacilityId(id_facility);
+        
+        if (!facilitiesOnUsers) {
+            throw new AppError('FacilitiesOnUsers not found', 404, {
+                isOperational: true,
+                code: 'FACILITIESONUSERS_NOT_FOUND',
+                details: 'FacilitiesOnUsers was not found',
+            });
+        }
+        const facilitiesOnUsersComBase64 = await Promise.all(
+            facilitiesOnUsers.map(async(users) => {
+                const photo = users.user.profile_pic;
+                let dataUri = null;
+                
+                if(photo){
+                    const buffer = Buffer.from(photo);
+
+                    const fileType = await fileTypeFromBuffer(buffer);
+
+                    if (!fileType) {
+                        throw new AppError('Tipo de imagem não reconhecido', 400);
+                    }
+
+                    const base64 = buffer.toString('base64');
+                    dataUri = `data:${fileType.mime};base64,${base64}`;
+                }
+
+                
+                return {
+                    ...users,
+                    user: {
+                        ...users.user,
+                        profile_pic:dataUri,
+                    },
+                };
+            })
+        )
+        return facilitiesOnUsersComBase64;
     }
 
     async getFacilitiesOnUsers(): Promise<FacilitiesOnUsers[]> {

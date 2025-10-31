@@ -29,8 +29,8 @@ export class FacilitiesOnUsersController implements IFacilitiesOnUsersController
     }
 
     async showByFacilityId(_req: FastifyRequest, reply: FastifyReply): Promise<FastifyReply> {
-        const { id } = _req.params as {id: string};
-        const data = await this.fac_userService.getFacilitiesOnUsersByFacilityId(id);
+        const { id_facility } = _req.params as {id_facility: string};
+        const data = await this.fac_userService.getFacilitiesOnUsersByFacilityId(id_facility);
         return reply.send(data);
     }
 
