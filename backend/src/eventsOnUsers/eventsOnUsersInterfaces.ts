@@ -22,6 +22,7 @@ export interface IEventsOnUsersService{
     deleteEventsOnUsersByUserId(id: string): Promise<void>;
     deleteEventsOnUsersByEventId(id: string): Promise<void>;   
     deleteEventsOnUsers(id_user: String, id_event: string): Promise<void>
+    deleteEventsOnUsersByFacilityId(id_facility: string): Promise<void>;
 }
 
 //REPOSITORY
@@ -33,4 +34,5 @@ export interface IEventsOnUsersRepository{
     deleteEventsOnUsers(id_user: string, id_event: string): Promise<void>;
     deleteEventsOnUsersByUserId(id: string,): Promise<void>;
     deleteEventsOnUsersByEventId(id: string,): Promise<void>;
+    deleteEventsOnUsersByFacilityId(id_facility: string,): Promise<void>;
 }

@@ -56,4 +56,10 @@ export class EventsOnUsersController implements IEventsOnUsersController{
         await this.evt_userService.deleteEventsOnUsersByEventId(id);
         return reply.status(204).send();
     }
+
+    async deleteByFacilityId(_req: FastifyRequest, reply: FastifyReply): Promise<FastifyReply> {
+        const { id_facility } = _req.params as { id_facility: string };
+        await this. evt_userService.deleteEventsOnUsersByFacilityId(id_facility);
+        return reply.status(204).send();
+    }
 }

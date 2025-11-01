@@ -60,4 +60,8 @@ export class EventsOnUsersService implements IEventsOnUsersService{
     async deleteEventsOnUsers(id_user: string, id_event: string): Promise<void> {
         await this.eventsOnUsersRepository.deleteEventsOnUsers(id_user, id_event);
     }
+
+    async deleteEventsOnUsersByFacilityId(id_facility: string): Promise<void> {
+        await this.eventsOnUsersRepository.deleteEventsOnUsersByFacilityId(id_facility);
+    }
 }

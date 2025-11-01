@@ -10,6 +10,7 @@ export interface IEventController {
     showById(_req: FastifyRequest, reply: FastifyReply): Promise<FastifyReply>;
     //update(_req: FastifyRequest<UpdateEventRequest>, reply: FastifyReply): Promise<FastifyReply>;
     delete(_req: FastifyRequest, reply: FastifyReply): Promise<FastifyReply>;
+    deleteByFacilityId(id_facility: string): Promise<void>;
 }
 
 export interface UpdateEventRequest extends RouteGenericInterface {
@@ -59,6 +60,7 @@ export interface IEventService{
     getEventById(id: string): Promise<EventsImage | null>;
     //updateEventById(id: string, data: Partial<Event>): Promise<Event>;
     deletEventById(id: string): Promise<void>;
+    deleteEventByFacilityId(id_facility: string): Promise<void>;
 }
 
 //REPOSITORY
@@ -69,4 +71,5 @@ export interface IEventRepository {
     findAllEvents(): Promise<Event[]>;
     updateEventById(id: string, updateData: Partial<Event>): Promise<Event>;
     deleteEventById(id: string): Promise<void>;
+    deleteEventByFacilityId(id_facility: string): Promise<void>;
 }

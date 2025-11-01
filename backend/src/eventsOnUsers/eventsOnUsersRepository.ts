@@ -49,4 +49,27 @@ export class PrismaEventsOnUsersRepository implements IEventsOnUsersRepository{
     async deleteEventsOnUsersByEventId(id_event: string): Promise<void> {
         await prisma.eventsOnUsers.deleteMany({ where: { id_event } })
     }
+
+    async deleteEventsOnUsersByFacilityId(id_facility: string): Promise<void> {
+        const events = await prisma.event.findMany({
+            where: {
+                id_facility: id_facility
+            },
+            select: {
+                id: true
+            }
+        });
+
+        if(events.length > 0){
+            const eventsIds = events.map(event => event.id);
+
+            await prisma.eventsOnUsers.deleteMany({
+                where: {
+                    id_event: {
+                        in: eventsIds
+                    }
+                }
+            });
+        }
+    }
 }

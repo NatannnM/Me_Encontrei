@@ -15,6 +15,7 @@ async function eventRoutes(app: FastifyInstance) {
     app.get('/events/:id',  eventController.showById.bind(eventController));
     //app.patch('/events/:id',  eventController.update.bind(eventController));
     app.delete('/events/:id',  eventController.delete.bind(eventController));
+    app.delete('/events/facility/:id_facility', eventController.deleteByFacilityId.bind(eventController));
 
 }
 

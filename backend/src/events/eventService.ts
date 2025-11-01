@@ -194,4 +194,8 @@ export class EventService implements IEventService {
 
         await this.eventRepository.deleteEventById(id);
     }
+
+    async deleteEventByFacilityId(id_facility: string){
+        return this.eventRepository.deleteEventByFacilityId(id_facility);
+    }
 }

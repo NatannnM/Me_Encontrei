@@ -11,7 +11,7 @@ interface CreateEventRequest {
 export class EventController implements IEventController {
     constructor(
         private readonly eventService: EventService,
-        private eventsOnUsersServices: EventsOnUsersService
+        private eventsOnUsersServices: EventsOnUsersService,
     ) { }
 
     async create(req: FastifyRequest, reply: FastifyReply) {
@@ -57,7 +57,13 @@ export class EventController implements IEventController {
 
     async delete(req: FastifyRequest, reply: FastifyReply) {
         const { id } = idSchema.parse(req.params);
+        await this.eventsOnUsersServices.deleteEventsOnUsersByEventId(id);
         await this.eventService.deletEventById(id);
         return reply.status(204).send();
+    }
+
+    async deleteByFacilityId(id_facility: string): Promise<void>{
+        await this.eventsOnUsersServices.deleteEventsOnUsersByFacilityId(id_facility);
+        await this.eventService.deleteEventByFacilityId(id_facility);
     }
 }

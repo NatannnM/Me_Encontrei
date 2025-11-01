@@ -3,6 +3,7 @@ import { IFacilityController, UpdateFacilityData, UpdateFacilityRequest } from "
 import { FacilityService } from "./facilityService";
 import { createFacilitySchema, idSchema } from "./facilitySchema";
 import { FacilitiesOnUsersService } from "src/facilitiesOnUsers/facilitiesOnUsersService";
+import { EventController } from "src/events/eventController";
 
 interface CreateFacilityRequest {
     userId: string; 
@@ -11,7 +12,8 @@ interface CreateFacilityRequest {
 export class FacilityController implements IFacilityController {
     constructor(
         private readonly facilityService: FacilityService,
-        private facilitiesOnUsersServices: FacilitiesOnUsersService
+        private facilitiesOnUsersServices: FacilitiesOnUsersService,
+        private eventController: EventController
     ) { }
 
     async create(req: FastifyRequest, reply: FastifyReply) {
@@ -54,6 +56,7 @@ export class FacilityController implements IFacilityController {
 
     async delete(req: FastifyRequest, reply: FastifyReply) {
         const { id } = idSchema.parse(req.params);
+        await this.eventController.deleteByFacilityId(id);
         await this.facilitiesOnUsersServices.deleteFacilitiesOnUsersByFacilityId(id);
         await this.facilityService.deletFacilityById(id);
         return reply.status(204).send();

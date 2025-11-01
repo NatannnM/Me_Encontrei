@@ -85,6 +85,6 @@ export class PrismaFacilitiesOnUsersRepository implements IFacilitiesOnUsersRepo
     }
 
     async deleteFacilitiesOnUsersByFacilityId(id_facility: string): Promise<void> {
-        await prisma.facilitiesOnUsers.deleteMany({ where: { id_facility } })
+        await prisma.facilitiesOnUsers.deleteMany({ where: { id_facility } });
     }
 }
