@@ -125,8 +125,8 @@ export class EventService implements IEventService {
         };
     }
 
-    /*async updateEventById(id: string, data: UpdateEventData) {
-        const { owner, name, address, city, info, begin_date, end_date, public: newPublic, price, id_facility } = data;
+    async updateEventById(id: string, data: UpdateEventData) {
+        const { owner, name, address, city, info, begin_date, end_date, public: newPublic, price, id_facility, photo } = data;
 
         const event = await this.eventRepository.findEventById(id);
 
@@ -150,20 +150,24 @@ export class EventService implements IEventService {
             public: Visibility;
             price: Decimal;
             id_facility: string;
+            photo: Uint8Array;
         }> = {};
-
-        if (location) UpdateData.location = location;
-        if (name) UpdateData.name = name;
-        if (description) UpdateData.description = description;
+        
         if (owner) UpdateData.owner = owner;
-        if (photo) {
-            if (photo instanceof Uint8Array) {
-                UpdateData.photo_url = Buffer.from(photo.buffer);
-            } else {
-                UpdateData.photo_url = Buffer.from(photo, 'base64');
-            }
+        if (name) UpdateData.name = name;
+        if (address) UpdateData.address = address;
+        if (city) UpdateData.city = city;
+        if (info) UpdateData.info = info;
+        if (begin_date){
+            const parsedDate = new Date(begin_date);
+
+            UpdateData.begin_date = parsedDate;
+        } 
+        if (end_date) {
+            const parsedDate = new Date(end_date);
+            
+            UpdateData.end_date = parsedDate;
         }
-        //Verifica valor do public
         if (newPublic) {
             const validPublicValues: Visibility[] = ['PRIVATE', 'PUBLIC']; 
                 if (!validPublicValues.includes(newPublic)) {
@@ -175,11 +179,33 @@ export class EventService implements IEventService {
                 }
             UpdateData.public = newPublic as Visibility;
         }
+        if (photo) {
+            let base64photo: string;
 
-        const updatedFacility = await this.facilityRepository.updateFacilityById(id, UpdateData);
+            if(typeof photo === 'string'){
+                const igualar = photo.match(/^data:(.+);base64,(.+)$/);
+                if(!igualar){
+                    throw new AppError('Formato de imagem inválida');
+                }
+                base64photo = igualar[2];
+            }else if (photo instanceof Uint8Array || Buffer.isBuffer(photo)){
+                base64photo = photo.toString('base64');
+            } else {
+                throw new AppError('Formato de imagem inválido');
+            }
 
-        return updatedFacility;
-    }*/
+            const photoBuffer = Buffer.from(base64photo, 'base64');
+
+            UpdateData.photo = photoBuffer;
+        }
+        if (price) UpdateData.price = price;
+        if (id_facility) UpdateData.id_facility = id_facility;
+        console.log('--------------------------------');
+        console.log('Esse é o updateData:'+UpdateData.begin_date);
+        const updatedEvent = await this.eventRepository.updateEventById(id, UpdateData);
+
+        return updatedEvent;
+    }
 
     async deletEventById(id: string) {
         const event = await this.eventRepository.findEventById(id);

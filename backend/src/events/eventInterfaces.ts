@@ -8,7 +8,7 @@ export interface IEventController {
     create(req: FastifyRequest, reply: FastifyReply): Promise<FastifyReply>;
     showAll(_req: FastifyRequest, reply: FastifyReply): Promise<FastifyReply>;
     showById(_req: FastifyRequest, reply: FastifyReply): Promise<FastifyReply>;
-    //update(_req: FastifyRequest<UpdateEventRequest>, reply: FastifyReply): Promise<FastifyReply>;
+    update(_req: FastifyRequest<UpdateEventRequest>, reply: FastifyReply): Promise<FastifyReply>;
     delete(_req: FastifyRequest, reply: FastifyReply): Promise<FastifyReply>;
     deleteByFacilityId(id_facility: string): Promise<void>;
 }
@@ -26,11 +26,13 @@ export interface UpdateEventRequest extends RouteGenericInterface {
         public?: Visibility;
         price?: Decimal;
         id_facility?: string;
-        photo?: Buffer;
+        photo?: string;
     }
 }
 
-export type UpdateEventData = Partial<Event>
+export type UpdateEventData = Partial<Event> & {
+    photo?: string | Buffer | Uint8Array;
+}
 
 export interface EventVisibility{
     visibility: 'PRIVATE' | 'PUBLIC';
@@ -58,7 +60,7 @@ export interface IEventService{
     findEventByName(name: string): Promise<Event | null>;
     getEvents(): Promise<EventsImage[]>;
     getEventById(id: string): Promise<EventsImage | null>;
-    //updateEventById(id: string, data: Partial<Event>): Promise<Event>;
+    updateEventById(id: string, data: Partial<Event>): Promise<Event>;
     deletEventById(id: string): Promise<void>;
     deleteEventByFacilityId(id_facility: string): Promise<void>;
 }

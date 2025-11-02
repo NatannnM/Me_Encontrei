@@ -1,6 +1,47 @@
-import { EventsOnUsers, Prisma } from "@prisma/client";
+import { EventsOnUsers, Prisma, Role, Visibility } from "@prisma/client";
 import { IEventsOnUsersRepository } from "./eventsOnUsersInterfaces";
 import { prisma } from "src/common/prismaClient";
+import { Decimal } from "@prisma/client/runtime/library";
+
+interface EventData {
+    id: string;
+    owner: string;
+    name: string;
+    address:string;
+    city:string
+    info:string;
+    begin_date: Date;
+    end_date: Date;
+    public: Visibility;
+    price: Decimal;
+    created_at: Date;
+    photo: Uint8Array | null; 
+    id_facility: string;
+}
+
+interface UserData {
+    id: string;
+    username: string;
+    email: string;
+    created_at: Date;
+    profile_pic: Uint8Array | null;
+    role: Role;
+}
+
+interface EventOnUsersData {
+  id_user: string;
+  id_event: string;
+  creator: boolean;
+  event: EventData; 
+}
+
+interface EventOnUsersDataUser {
+  id_user: string;
+  id_event: string;
+  creator: boolean;
+  user: UserData; 
+}
+
 
 export class PrismaEventsOnUsersRepository implements IEventsOnUsersRepository{
     async create(data: Prisma.EventsOnUsersCreateInput){
@@ -11,16 +52,18 @@ export class PrismaEventsOnUsersRepository implements IEventsOnUsersRepository{
         return evt_users;
     }
 
-    async findEventsOnUsersByUserId(id_user: string): Promise<EventsOnUsers[] | null> {
+    async findEventsOnUsersByUserId(id_user: string): Promise<EventOnUsersData[] | null> {
         return prisma.eventsOnUsers.findMany({
             where: { id_user },
             include: { event:true }
         });        
     }
 
-    async findEventsOnUsersByEventId(id_event: string): Promise<EventsOnUsers[] | null> {
-        return prisma.eventsOnUsers.findMany({
-            where: { id_event },
+    async findEventsOnUsersByEventId(id_event: string): Promise<EventOnUsersDataUser[] | null> {
+        return await prisma.eventsOnUsers.findMany({
+            where: { 
+                id_event: id_event, 
+            },
             include: { user:true }
         });        
     }

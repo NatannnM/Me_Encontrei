@@ -48,9 +48,7 @@ export class FacilitiesOnUsersService implements IFacilitiesOnUsersService{
 
     async createFacilitiesOnUsers(data: createFacilitiesOnUsersInput): Promise<FacilitiesOnUsers> {
         const {id_user, id_facility, creator} = data;
-        console.log(id_user);
-        console.log(id_facility);
-        console.log(creator);
+        
         const user = await prisma.user.findUnique({
             where: { id: id_user}
         });

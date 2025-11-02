@@ -1,8 +1,9 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { IEventController } from "./eventInterfaces";
+import { IEventController, UpdateEventRequest } from "./eventInterfaces";
 import { EventService } from "./eventService";
 import { createEventSchema, idSchema } from "./eventSchema";
 import { EventsOnUsersService } from "src/eventsOnUsers/eventsOnUsersService";
+import { UpdateFacilityData } from "src/facilities/facilityInterfaces";
 
 interface CreateEventRequest {
     userId: string
@@ -43,17 +44,13 @@ export class EventController implements IEventController {
         return reply.status(200).send({ event });
     }
 
-    /*async update(req: FastifyRequest<UpdateFacilityRequest>, reply: FastifyReply) {
+    async update(req: FastifyRequest<UpdateEventRequest>, reply: FastifyReply) {
         const { id } = req.params;
-        const data = req.body;
+        const data = req.body as UpdateFacilityData;
 
-        if(data.photo && typeof data.photo === 'string') {
-            data.photo = Buffer.from(data.photo, 'base64');
-        }
-
-        const facility = await this.facilityService.updateFacilityById(id, data);
-        return reply.status(200).send({ facility });
-    }*/
+        const event = await this.eventService.updateEventById(id, data);
+        return reply.status(200).send({ event });
+    }
 
     async delete(req: FastifyRequest, reply: FastifyReply) {
         const { id } = idSchema.parse(req.params);
