@@ -5,7 +5,9 @@ import { createUserInput } from "./userSchema";
 // CONTROLLER
 export interface IUserController {
     index(_req: FastifyRequest, reply: FastifyReply): Promise<FastifyReply>;
-    show(req: FastifyRequest, reply: FastifyReply): Promise<FastifyReply>;
+    create(req: FastifyRequest, reply: FastifyReply): Promise<FastifyReply>;
+    showById(req: FastifyRequest, reply: FastifyReply): Promise<FastifyReply>;
+    showAll(req: FastifyRequest, reply: FastifyReply): Promise<FastifyReply>;
     update(req: FastifyRequest<UpdateUserRequest>, reply: FastifyReply): Promise<FastifyReply>;
     delete(req: FastifyRequest, reply: FastifyReply): Promise<FastifyReply>;
 }
@@ -37,7 +39,14 @@ export interface UserRole {
 export interface IUserService {
     createUser(data: createUserInput): Promise<User>;
     findUserByUsername(username: string): Promise<User | null>;
-    getUsers(): Promise<Omit<User, "password_hash">[]>;
+    getUsers(): Promise<Omit<{
+        id: string;
+        username: string;
+        email: string;
+        role: Role;
+        created_at: Date;
+        profile_pic: string | null;
+    }, "password_hash">[]>;
     getUserById(id: string): Promise <Omit<{
         username: string;
         email: string;

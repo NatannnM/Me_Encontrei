@@ -86,7 +86,36 @@ export class UserService implements IUserService {
     }
 
     async getUsers() {
-        return this.userRepository.findAllUsers();
+        const user = await this.userRepository.findAllUsers();
+        let dataUri = '';
+        const users = await Promise.all(
+            user.map(async (u) => {
+                if(u.profile_pic){
+                    const buffer = Buffer.from(u.profile_pic);
+
+                    const fileType = await fileTypeFromBuffer(buffer);
+                
+                    if(!fileType){
+                        throw new AppError('Tipo de imagem não reconhecido', 400);
+                    }
+
+                    const base64 = buffer.toString('base64');
+
+                    dataUri = `data:${fileType.mime};base64,${base64}`;
+                }
+                
+                return{
+                    id: u.id,
+                    username: u.username,
+                    email: u.email,
+                    created_at: u.created_at,
+                    role: u.role,
+                    profile_pic: dataUri
+                };
+            })
+        )    
+
+        return users;
     }
 
     async getUserById(id: string) {

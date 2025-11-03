@@ -12,6 +12,7 @@ async function alertRoutes(app: FastifyInstance) {
     app.get('/alerts',  alertController.showAll.bind(alertController));
     app.get('/alerts/:id',  alertController.showById.bind(alertController));
     app.get('/alerts/facility/:facility_id', alertController.showByFacilityId.bind(alertController));
+    app.get('/alerts/event/:id_event', alertController.showByEventId.bind(alertController));
     app.delete('/alerts/:id',  alertController.delete.bind(alertController));
 
 }

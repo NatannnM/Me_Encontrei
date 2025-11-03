@@ -25,6 +25,7 @@ export interface IAlertRepository {
     create(data: Prisma.AlertCreateInput): Promise<Alert>;
     findAlertById(id: string): Promise<Alert | null>;
     findAlertByFacilityId(id_facility: string): Promise<Alert[] | null>;
+    findAlertByEventId(id_event: string): Promise<Alert[] | null>;
     findAllAlerts(): Promise<Alert[]>;
     deleteAlertById(id: string): Promise<void>;
 }

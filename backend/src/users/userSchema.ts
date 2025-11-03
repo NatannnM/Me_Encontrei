@@ -29,7 +29,6 @@ export const createUserSchema = z.object({
         .min(8, { message: "Password must be at least 8 characters long" }),
     profile_pic: z
         .string({
-            required_error: 'A imagem é obrigatória!'
         })
         .refine((val) => {
             try {

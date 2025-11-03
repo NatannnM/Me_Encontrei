@@ -82,6 +82,20 @@ export class AlertService implements IAlertService {
         return alerts;
     }
 
+    async getAlertByEventId(id_event: string): Promise<Alert[] | null> {
+        const alerts = await this.alertRepository.findAlertByEventId(id_event);
+
+        if (!alerts) {
+            throw new AppError('Alert not found', 404, {
+                isOperational: true,
+                code: 'ALERT_NOT_FOUND',
+                details: 'Alert was not found',
+            });
+        }
+
+        return alerts;
+    }
+
     async deletAlertById(id: string) {
         const alert = await this.alertRepository.findAlertById(id);
 

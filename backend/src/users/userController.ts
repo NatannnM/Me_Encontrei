@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { IUserController, UpdateUserData, UpdateUserRequest, UserRole } from "./userInterfaces";
-import { idSchema } from "./userSchema";
+import { createUserSchema, idSchema } from "./userSchema";
 import { UserService } from "./userService";
 
 export class UserController implements IUserController {
@@ -11,9 +11,20 @@ export class UserController implements IUserController {
         return reply.status(200).send({ user });
     }
 
-    async show(req: FastifyRequest, reply: FastifyReply) {
+    async create(req: FastifyRequest, reply: FastifyReply){
+        const data = createUserSchema.parse(req.body);
+        const user = await this.userService.createUser(data);
+        return reply.status(201).send({ user });
+    }
+
+    async showById(req: FastifyRequest, reply: FastifyReply) {
         const { id } = idSchema.parse(req.params);
         const user = await this.userService.getUserById(id);
+        return reply.status(200).send({ user });
+    }
+
+    async showAll(req: FastifyRequest, reply: FastifyReply){
+        const user = await this.userService.getUsers();
         return reply.status(200).send({ user });
     }
 

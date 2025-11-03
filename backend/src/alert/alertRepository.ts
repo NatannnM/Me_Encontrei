@@ -29,6 +29,14 @@ export class PrismaAlertRepository implements IAlertRepository {
         });
     }
 
+    async findAlertByEventId(id_event: string){
+        return await prisma.alert.findMany({
+            where: {
+                id_event
+            }
+        })
+    }
+
     async findAllAlerts() {
         const alerts = await prisma.alert.findMany({
             select: {

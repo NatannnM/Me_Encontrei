@@ -31,6 +31,12 @@ export class AlertController implements IAlertController {
         return reply.send(data);
     }
 
+    async showByEventId(_req: FastifyRequest, reply: FastifyReply): Promise<FastifyReply>{
+        const { id_event } = _req.params as {id_event: string};
+        const data = await this.alertService.getAlertByEventId(id_event);
+        return reply.send(data);
+    }
+
     async delete(req: FastifyRequest, reply: FastifyReply) {
         const { id } = idSchema.parse(req.params);
         await this.alertService.deletAlertById(id);
