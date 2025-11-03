@@ -37,7 +37,7 @@ export function logServerInfo(port: number, env: string) {
     console.log(chalk.green.bold('✅ Server started successfully!'));
     console.log(chalk.blue(`🌐 Running at: `) + chalk.underline(`http://${ip}:${port}`));
     console.log(chalk.magenta(`🛠️  Environment:`), resolvedEnv);
-    console.log(chalk.yellow(`👥 Team:`), 'Luís Artur Vieira Junqueira, Natanael e Guilherme Gonçalves.');
+    console.log(chalk.yellow(`👥 Team:`), 'Luís Artur Vieira Junqueira, Natanael Menezes Martins e Guilherme Gonçalves.');
     console.log('');
 }
 
