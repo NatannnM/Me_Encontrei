@@ -91,34 +91,33 @@ export class EventsOnUsersService implements IEventsOnUsersService{
         }
 
         const eventOnUsersComBase64 = await Promise.all(
-            eventOnUsers.map(async(event) => {
-                const photo = event.event.photo;
+            eventOnUsers.map(async(events) => {
+                const photo = events.event.photo;
                 let dataUri = null;
-                        
+
                 if(photo){
                     const buffer = Buffer.from(photo);
 
                     const fileType = await fileTypeFromBuffer(buffer);
 
-                    if (!fileType) {
+                    if(!fileType){
                         throw new AppError('Tipo de imagem não reconhecido', 400);
                     }
 
                     const base64 = buffer.toString('base64');
                     dataUri = `data:${fileType.mime};base64,${base64}`;
                 }
-        
-                        
-                        return {
-                            ...event,
-                            event: {
-                                ...event.event,
-                                photo:dataUri,
-                            },
-                        };
-                    })
-                )
-                return eventOnUsersComBase64;
+
+                return{
+                    ...events,
+                    event: {
+                        ...events.event,
+                        photo:dataUri
+                    },
+                };
+            })
+        )
+        return eventOnUsersComBase64;
     }
 
     async getEventsOnUsersByEventId(id_event: string): Promise<EventOnUsersDataUser[] | null> {
