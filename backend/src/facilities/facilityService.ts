@@ -259,7 +259,6 @@ export class FacilityService implements IFacilityService {
 
     async deletFacilityById(id: string) {
         const facility = await this.facilityRepository.findFacilityById(id);
-
         if (!facility) {
             throw new AppError('Facility not found', 404, {
                 isOperational: true,
