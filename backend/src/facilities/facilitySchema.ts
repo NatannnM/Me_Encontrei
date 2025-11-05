@@ -60,22 +60,6 @@ export const createFacilitySchema = z.object({
         {
             message: 'Formato base64 inválido',
         }),
-    map: z
-        .string({
-            required_error: 'O mapa é obrigatório!'
-        })
-        .refine((val) => {
-            try {
-                const cleaned = val.replace(/^data:.*;base64,/, '');
-                Buffer.from(cleaned, 'base64');
-                return true;
-                } catch {
-                    return false;
-                }
-        }, 
-        {
-            message: 'Formato base64 inválido',
-        }),
 })
 
 export type createFacilityInput = z.infer<typeof createFacilitySchema>;

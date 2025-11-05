@@ -21,13 +21,12 @@ export interface UpdateFacilityRequest extends RouteGenericInterface {
         owner?: string;
         public?: Visibility;
         photo?: string;
-        map?: string;
+        map?: string | null;
     }
 }
 
 export type UpdateFacilityData = Partial<Facility> & {
     photo?: string | Buffer | Uint8Array;
-    map?: string | Buffer | Uint8Array;
 }
 
 export interface FacilityVisibility{
@@ -43,7 +42,7 @@ export interface FacilitiesImage {
   public: Visibility;  
   created_at: Date;
   image: string;
-  imageMap: string;       
+  map: string | null;    
 }
 
 // SERVICE

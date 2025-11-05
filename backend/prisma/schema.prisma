@@ -58,7 +58,7 @@ model Facility {
   public          Visibility @default(PRIVATE) 
   created_at      DateTime   @default(now())
   photo           Bytes
-  map             Bytes
+  map             String?
   users           FacilitiesOnUsers[]
   Events          Event[]
   Alert           Alert[]

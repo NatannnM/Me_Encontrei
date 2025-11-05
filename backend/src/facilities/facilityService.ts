@@ -10,7 +10,7 @@ export class FacilityService implements IFacilityService {
     constructor(private readonly facilityRepository: PrismaFacilityRepository) { }
 
     async createFacility(data: createFacilityInput){
-        const { location, city, name, description, owner, photo, map } = data;
+        const { location, city, name, description, owner, photo } = data;
 
         const nameExists = await this.facilityRepository.findByName(name);
 
@@ -26,17 +26,14 @@ export class FacilityService implements IFacilityService {
             });
         }
         const igualar = photo.match(/^data:(.+);base64,(.+)$/);
-        const igualarMapa = map.match(/^data:(.+);base64,(.+)$/);
 
-        if(!igualar || !igualarMapa){
+        if(!igualar){
             throw new AppError('Formato de imagem inválido')
         }
 
         const base64data = igualar[2];
-        const base64dataMapa = igualarMapa[2];
 
         const photoBuffer = Buffer.from(base64data, 'base64');
-        const photoBufferMapa = Buffer.from(base64dataMapa, 'base64');
 
         const facility = await this.facilityRepository.create({
             location,
@@ -47,7 +44,6 @@ export class FacilityService implements IFacilityService {
             public: 'PRIVATE',
             created_at: new Date(),
             photo: photoBuffer,
-            map: photoBufferMapa,
         })
 
         return facility;
@@ -63,21 +59,17 @@ export class FacilityService implements IFacilityService {
         const facilitiesImage = await Promise.all(
             facility.map(async (f) => {
                 const buffer = Buffer.from(f.photo);
-                const bufferMapa = Buffer.from(f.map);
 
                 const fileType = await fileTypeFromBuffer(buffer);
-                const fileTypeMapa = await fileTypeFromBuffer(bufferMapa);
+             
 
-                if(!fileType || !fileTypeMapa){
+                if(!fileType){
                     throw new AppError('Tipo de imagem não reconhecido', 400);
                 }
 
                 const base64 = buffer.toString('base64');
-                const base64Mapa = bufferMapa.toString('base64');
 
                 const dataUri = `data:${fileType.mime};base64,${base64}`;
-                const dataUriMapa = `data:${fileTypeMapa.mime};base64,${base64Mapa}`;
-
 
                 return{
                     id: f.id,
@@ -89,7 +81,7 @@ export class FacilityService implements IFacilityService {
                     public: f.public,
                     created_at: f.created_at,
                     image: dataUri,
-                    imageMap: dataUriMapa
+                    map: f.map
                 };
             })
         );
@@ -109,21 +101,18 @@ export class FacilityService implements IFacilityService {
         }
 
         const buffer = Buffer.from(facility.photo);
-        const bufferMapa = Buffer.from(facility.map);
+        
 
         const fileType = await fileTypeFromBuffer(buffer);
-        const fileTypeMapa = await fileTypeFromBuffer(bufferMapa);
+        
 
-        if(!fileType || !fileTypeMapa){
+        if(!fileType){
             throw new AppError('Tipo de imagem não reconhecido', 400);
         }
 
         const base64 = buffer.toString('base64');
-        const base64Mapa = bufferMapa.toString('base64');
 
         const dataUri = `data:${fileType.mime};base64,${base64}`;
-        const dataUriMapa = `data:${fileTypeMapa.mime};base64,${base64Mapa}`;
-
 
         return{
             id: facility.id,
@@ -135,7 +124,7 @@ export class FacilityService implements IFacilityService {
             public: facility.public,
             created_at: facility.created_at,
             image: dataUri,
-            imageMap: dataUriMapa
+            map: facility.map
         };
     }
 
@@ -192,7 +181,7 @@ export class FacilityService implements IFacilityService {
             description: string;
             owner: string;
             photo: Uint8Array;
-            map: Uint8Array;
+            map: string;
             public: Visibility;
         }> = {};
 
@@ -220,25 +209,7 @@ export class FacilityService implements IFacilityService {
 
             UpdateData.photo = photoBuffer;
         }
-        if (map) {
-            let base64map: string;
-
-            if(typeof map === 'string'){
-                const igualar = map.match(/^data:(.+);base64,(.+)$/);
-                if(!igualar){
-                    throw new AppError('Formato de imagem inválida');
-                }
-                base64map = igualar[2];
-            }else if (map instanceof Uint8Array || Buffer.isBuffer(map)){
-                base64map = map.toString('base64');
-            } else {
-                throw new AppError('Formato de imagem inválido');
-            }
-
-            const mapBuffer = Buffer.from(base64map, 'base64');
-
-            UpdateData.map = mapBuffer;
-        }
+        if (map) UpdateData.map = map;
         //Verifica valor do public
         if (newPublic) {
             const validPublicValues: Visibility[] = ['PRIVATE', 'PUBLIC']; 

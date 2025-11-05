@@ -12,7 +12,7 @@ interface FacilityData {
     public: Visibility;
     created_at : Date;
     photo: Uint8Array | null; 
-    map: Uint8Array | null;
+    map: string | null;
 }
 
 interface UserData {
