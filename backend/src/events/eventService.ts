@@ -75,7 +75,8 @@ export class EventService implements IEventService {
                     price: e.price,
                     created_at: e.created_at,    
                     id_facility: e.id_facility,
-                    image: dataUri
+                    image: dataUri,
+                    map: e.map
                 };
             })
         )    
@@ -121,12 +122,13 @@ export class EventService implements IEventService {
             price: event.price,
             created_at: event.created_at,    
             id_facility: event.id_facility,
-            image: dataUri
+            image: dataUri,
+            map: event.map
         };
     }
 
     async updateEventById(id: string, data: UpdateEventData) {
-        const { owner, name, address, city, info, begin_date, end_date, public: newPublic, price, id_facility, photo } = data;
+        const { owner, name, address, city, info, begin_date, end_date, public: newPublic, price, id_facility, photo, map } = data;
 
         const event = await this.eventRepository.findEventById(id);
 
@@ -151,6 +153,7 @@ export class EventService implements IEventService {
             price: Decimal;
             id_facility: string;
             photo: Uint8Array;
+            map: string;
         }> = {};
         
         if (owner) UpdateData.owner = owner;
@@ -199,6 +202,7 @@ export class EventService implements IEventService {
             UpdateData.photo = photoBuffer;
         }
         if (price) UpdateData.price = price;
+        if (map) UpdateData.map = map;
         if (id_facility) UpdateData.id_facility = id_facility;
         console.log('--------------------------------');
         console.log('Esse é o updateData:'+UpdateData.begin_date);

@@ -49,7 +49,6 @@ export class FacilityController implements IFacilityController {
     async update(req: FastifyRequest<UpdateFacilityRequest>, reply: FastifyReply) {
         const { id } = req.params;
         const data = req.body as UpdateFacilityData;
-        console.log(data.public);
         const facility = await this.facilityService.updateFacilityById(id, data);
         return reply.status(200).send({ facility });
     }

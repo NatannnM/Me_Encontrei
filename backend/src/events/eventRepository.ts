@@ -47,6 +47,7 @@ export class PrismaEventRepository implements IEventRepository {
                 created_at: true,
                 id_facility: true,
                 photo: true,
+                map: true
             }
         })
         return events;

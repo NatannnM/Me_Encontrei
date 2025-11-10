@@ -27,6 +27,7 @@ export interface UpdateEventRequest extends RouteGenericInterface {
         price?: Decimal;
         id_facility?: string;
         photo?: string;
+        map?: string | null;
     }
 }
 
@@ -52,6 +53,7 @@ export interface EventsImage {
     price: Decimal;
     id_facility: string;
     image: string;
+    map: string | null;
 }
 
 // SERVICE

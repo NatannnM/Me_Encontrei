@@ -91,6 +91,7 @@ model Event {
   photo           Bytes
   id_facility     String     
   facility        Facility         @relation(fields: [id_facility], references: [id])
+  map             String?
   users           EventsOnUsers[]
   event_schedules Event_Schedule[]
   event_stands    Event_Stand[]
