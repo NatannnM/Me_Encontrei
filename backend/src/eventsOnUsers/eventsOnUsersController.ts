@@ -29,8 +29,8 @@ export class EventsOnUsersController implements IEventsOnUsersController{
     }
 
     async showByEventId(_req: FastifyRequest, reply: FastifyReply): Promise<FastifyReply> {
-        const { id } = _req.params as {id: string};
-        const data = await this.evt_userService.getEventsOnUsersByEventId(id);
+        const { id_event } = _req.params as {id_event: string};
+        const data = await this.evt_userService.getEventsOnUsersByEventId(id_event);
         return reply.send(data);
     }
 
