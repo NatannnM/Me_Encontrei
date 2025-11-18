@@ -23,6 +23,7 @@ export class UserController implements IUserController {
     }
 
     async create(req: FastifyRequest, reply: FastifyReply){
+        console.log('CHEGO AQUI aaaaaa');
         const data = createUserSchema.parse(req.body);
         const user = await this.userService.createUser(data);
         return reply.status(201).send({ user });
